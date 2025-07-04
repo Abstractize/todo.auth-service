@@ -1,3 +1,3 @@
 ﻿namespace Models;
 
-public record AuthResponse(string Token, DateTime ExpiresAt);
+public record AuthResponse(string Token, string RefreshToken, DateTime ExpiresAt);

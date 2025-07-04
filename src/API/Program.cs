@@ -11,13 +11,18 @@ namespace API;
 
 public class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         string JWT_ISSUER = builder.Configuration.GetValue<string>(nameof(JWT_ISSUER))!;
         string JWT_AUDIENCE = builder.Configuration.GetValue<string>(nameof(JWT_AUDIENCE))!;
         string JWT_KEY = builder.Configuration.GetValue<string>(nameof(JWT_KEY))!;
+
+        string ADMIN_EMAIL = builder.Configuration
+            .GetValue<string>(nameof(ADMIN_EMAIL))!;
+        string ADMIN_PASSWORD = builder.Configuration
+            .GetValue<string>(nameof(ADMIN_PASSWORD))!;
 
         string? SQL_CONNECTION_STRING = builder.Configuration
             .GetValue<string>(nameof(SQL_CONNECTION_STRING));
@@ -57,6 +62,8 @@ public class Program
         app.UseAuthorization();
 
         app.MapAuthEndpoint();
+
+        await app.SeedDatabaseAsync(ADMIN_EMAIL, ADMIN_PASSWORD);
 
         app.Run();
     }
