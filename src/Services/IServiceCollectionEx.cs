@@ -9,8 +9,9 @@ namespace Services
     {
         public static IServiceCollection AddServices(this IServiceCollection services, string audience, string issuer, string jwtKey)
         {
-            services.AddScoped<IHasherService>(x => new HasherService(new PasswordHasher()));
-            services.AddScoped<IJWTService>(x => new JWTService(audience, issuer, jwtKey));
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IHasherService, HasherService>();
+            services.AddScoped<ITokenService>(x => new TokenService(audience, issuer, jwtKey));
 
             return services;
         }

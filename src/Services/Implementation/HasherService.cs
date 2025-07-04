@@ -3,9 +3,9 @@ using Services.Contracts;
 
 namespace Services.Implementation;
 
-internal class HasherService(PasswordHasher passwordHasher) : IHasherService
+internal class HasherService(IPasswordHasher passwordHasher) : IHasherService
 {
-    private readonly PasswordHasher _passwordHasher = passwordHasher;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
     public string Hash(string password)
     {
