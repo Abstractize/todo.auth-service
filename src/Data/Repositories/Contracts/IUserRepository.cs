@@ -1,9 +1,7 @@
-﻿using Data.Entities;
-using System.Linq.Expressions;
+﻿using Data.Common.Repositories.Contracts;
+using Data.Entities;
 
 namespace Data.Repositories.Contracts;
 
-public interface IUserRepository
-{
-    Task<User?> FindAsync(Expression<Func<User, bool>> filter);
-}
+public interface IUserRepository : IBaseRepository<User>
+{ }

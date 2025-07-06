@@ -1,8 +1,9 @@
 ﻿namespace Services.Contracts
 {
-    public interface IHasherService
+    public interface IHasherService<TUser>
+        where TUser : class
     {
-        string Hash(string password);
-        bool Verify(string password, string hash);
+        string Hash(TUser user, string password);
+        bool Verify(TUser user, string password, string hash);
     }
 }

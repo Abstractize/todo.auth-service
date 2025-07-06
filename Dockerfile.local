@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS dev
+FROM todo.microservice.local:base AS dev
 
 WORKDIR /app
 

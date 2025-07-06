@@ -10,16 +10,20 @@ namespace API.Endpoints
         public static void MapAuthEndpoint(this IEndpointRouteBuilder app)
         {
             app.MapPost("/api/auth/login",
-                (IAuthManager authManager, [FromBody] LoginRequest loginRequest)
+                [AllowAnonymous] (IAuthManager authManager, [FromBody] LoginRequest loginRequest)
                     => authManager.LoginAsync(loginRequest));
 
             app.MapPost("/api/auth/refresh-token",
-                (IAuthManager authManager, [FromBody] TokenActionRequest request)
+                [AllowAnonymous] (IAuthManager authManager, [FromBody] TokenActionRequest request)
                     => authManager.RefreshTokenAsync(request));
 
             app.MapPost("/api/auth/logout",
-                (IAuthManager authManager, [FromBody] TokenActionRequest request)
+                [Authorize] (IAuthManager authManager, [FromBody] TokenActionRequest request)
                     => authManager.LogoutAsync(request));
+
+            app.MapPost("/api/auth/register",
+                [AllowAnonymous] (IAuthManager authManager, [FromBody] RegisterRequest registerRequest)
+                    => authManager.RegisterAsync(registerRequest));
         }
     }
 }

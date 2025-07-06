@@ -8,12 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
+    <ProjectReference Include="..\Managers\Managers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Managers\Managers.csproj" />
+    <PackageReference Include="ToDoApp.API.Common" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

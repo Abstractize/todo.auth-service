@@ -1,10 +1,7 @@
-﻿using Data.Entities;
-using Models;
-
-namespace Services.Contracts;
+﻿namespace Services.Contracts;
 
 public interface ITokenService
 {
-    Task<(string Token, DateTime ExpiresAt)> GenerateAccessToken(User user);
+    Task<(string Token, DateTime ExpiresAt)> GenerateAccessToken(Guid userId, string email, string fullName, string role);
     Task<string> GenerateSecureRefreshToken();
 }

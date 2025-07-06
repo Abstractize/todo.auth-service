@@ -13,4 +13,10 @@
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="ToDoApp.Models.Common" Version="1.0.0" />
+    <PackageReference Include="ToDoApp.Services.Common" Version="1.0.0" />
+  </ItemGroup>
+
 </Project>

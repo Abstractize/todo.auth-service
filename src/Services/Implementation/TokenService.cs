@@ -2,9 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Data.Entities;
 using Microsoft.IdentityModel.Tokens;
-using Models;
 using Services.Contracts;
 
 namespace Services.Implementation;
@@ -17,7 +15,7 @@ internal class TokenService(string audience, string issuer, string jwtKey) : ITo
     private readonly string _issuer = issuer;
     private readonly string _jwtKey = jwtKey;
 
-    public Task<(string Token, DateTime ExpiresAt)> GenerateAccessToken(User user)
+    public Task<(string Token, DateTime ExpiresAt)> GenerateAccessToken(Guid userId, string email, string fullName, string role)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -25,10 +23,10 @@ internal class TokenService(string audience, string issuer, string jwtKey) : ITo
 
         Claim[] claims =
         [
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.FullName),
-            new Claim(ClaimTypes.Role, nameof(user.Role))
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.Email, email),
+            new Claim(ClaimTypes.Name, fullName),
+            new Claim(ClaimTypes.Role, role)
         ];
 
         JwtSecurityToken token = new(

@@ -1,20 +1,21 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Services.Contracts;
 
 namespace Services.Implementation;
 
-internal class HasherService(IPasswordHasher passwordHasher) : IHasherService
+internal class HasherService<TUser>(IPasswordHasher<TUser> passwordHasher) : IHasherService<TUser>
+    where TUser : class
 {
-    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+    private readonly IPasswordHasher<TUser> _passwordHasher = passwordHasher;
 
-    public string Hash(string password)
+    public string Hash(TUser user, string password)
     {
-        return _passwordHasher.HashPassword(password);
+        return _passwordHasher.HashPassword(user, password);
     }
 
-    public bool Verify(string password, string hash)
+    public bool Verify(TUser user, string password, string hash)
     {
-        PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(hash, password);
+        PasswordVerificationResult result = _passwordHasher.VerifyHashedPassword(user, hash, password);
 
         return result switch
         {

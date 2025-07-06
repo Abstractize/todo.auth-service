@@ -1,17 +1,16 @@
 using API.Endpoints;
+using API.Common.Middlewares;
 using Data;
 using Managers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Json;
-using Microsoft.IdentityModel.Tokens;
 using Services;
-using System.Text.Json;
+using Data.Entities;
+using Services.Common.Identity;
 
 namespace API;
 
 public class Program
 {
-    private static async Task Main(string[] args)
+    private static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,51 +18,24 @@ public class Program
         string JWT_AUDIENCE = builder.Configuration.GetValue<string>(nameof(JWT_AUDIENCE))!;
         string JWT_KEY = builder.Configuration.GetValue<string>(nameof(JWT_KEY))!;
 
-        string ADMIN_EMAIL = builder.Configuration
-            .GetValue<string>(nameof(ADMIN_EMAIL))!;
-        string ADMIN_PASSWORD = builder.Configuration
-            .GetValue<string>(nameof(ADMIN_PASSWORD))!;
-
         string? SQL_CONNECTION_STRING = builder.Configuration
             .GetValue<string>(nameof(SQL_CONNECTION_STRING));
 
         builder.Services.AddDataLayer(SQL_CONNECTION_STRING);
-        builder.Services.AddServices(JWT_AUDIENCE, JWT_ISSUER, JWT_KEY);
+        builder.Services.AddIdentityService();
+        builder.Services.AddServices<User>(JWT_AUDIENCE, JWT_ISSUER, JWT_KEY);
         builder.Services.AddManagers();
 
-        builder.Services.Configure<JsonOptions>(opt =>
-        {
-            opt.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            opt.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-        });
+        builder.Services.AddCamelCaseJson();
 
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = JWT_ISSUER,
-                    ValidAudience = JWT_AUDIENCE,
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(JWT_KEY))
-                };
-            }
-        );
-
-        builder.Services.AddAuthorization();
-
+        builder.Services.AddAuthConfiguration(JWT_ISSUER, JWT_AUDIENCE, JWT_KEY);
 
         WebApplication app = builder.Build();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseJsonExceptionHandler();
+        app.UseAuth();
 
         app.MapAuthEndpoint();
-
-        await app.SeedDatabaseAsync(ADMIN_EMAIL, ADMIN_PASSWORD);
 
         app.Run();
     }
