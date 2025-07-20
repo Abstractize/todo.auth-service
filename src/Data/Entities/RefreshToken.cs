@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Data.Entities;
 
 public class RefreshToken
@@ -8,12 +10,12 @@ public class RefreshToken
     public User User { get; set; } = null!;
 
     public string Token { get; set; } = null!;
-    public DateTime ExpiresAt { get; set; }
+    public DateTime ExpiresAtUtc { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? RevokedAt { get; set; }
+    public DateTime? RevokedAtUtc { get; set; }
     public string? ReplacedByToken { get; set; }
 
-    public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
-    public bool IsRevoked => RevokedAt.HasValue;
-    public bool IsActive => !IsExpired && !IsRevoked;
+    public bool IsExpired() => DateTime.UtcNow >= ExpiresAtUtc;
+    public bool IsRevoked() => RevokedAtUtc.HasValue;
+    public bool IsActive() => RevokedAtUtc == null && DateTime.UtcNow < ExpiresAtUtc;
 }
