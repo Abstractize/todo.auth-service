@@ -27,7 +27,7 @@ internal class AuthManager(
     {
         // Validate the request
 
-        Entities.User user = await _userRepository.FindAsync(u => u.Email == loginRequest.Email)
+        User user = await _userRepository.FindAsync(u => u.Email == loginRequest.Email)
             ?? throw new UnauthorizedException("Invalid email or password.");
 
         if (!_hasherService.Verify(user, loginRequest.Password, user.PasswordHash))
@@ -42,11 +42,11 @@ internal class AuthManager(
 
         string refreshToken = await tokenService.GenerateSecureRefreshToken();
 
-        await _refreshTokenRepository.AddAsync(new Entities.RefreshToken
+        await _refreshTokenRepository.AddAsync(new RefreshToken
         {
             Token = refreshToken,
             UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddDays(30)
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(30)
         });
 
         return new AuthResponse(token, refreshToken, expiresAt);
@@ -56,11 +56,11 @@ internal class AuthManager(
     {
         string refreshToken = request.RefreshToken;
 
-        Entities.RefreshToken? existingRefreshToken = await _refreshTokenRepository
-            .FindAsync(rt => rt.Token == refreshToken && rt.IsActive, includeUser: true) ??
+        RefreshToken? existingRefreshToken = await _refreshTokenRepository
+            .FindAsync(rt => rt.Token == refreshToken && rt.RevokedAtUtc == null && DateTime.UtcNow < rt.ExpiresAtUtc, includeUser: true) ??
             throw new UnauthorizedException("Invalid or expired refresh token.");
 
-        Entities.User user = await _userRepository.FindAsync(x => x.Id == existingRefreshToken.UserId)
+        User user = await _userRepository.FindAsync(x => x.Id == existingRefreshToken.UserId)
             ?? throw new UnauthorizedException("User not found.");
 
         (string newToken, DateTime expiresAt) = await tokenService.GenerateAccessToken(
@@ -72,16 +72,16 @@ internal class AuthManager(
 
         string newRefreshToken = await tokenService.GenerateSecureRefreshToken();
 
-        existingRefreshToken.RevokedAt = DateTime.UtcNow;
+        existingRefreshToken.RevokedAtUtc = DateTime.UtcNow;
         existingRefreshToken.ReplacedByToken = newRefreshToken;
 
         await _refreshTokenRepository.UpdateAsync(existingRefreshToken);
 
-        await _refreshTokenRepository.AddAsync(new Entities.RefreshToken
+        await _refreshTokenRepository.AddAsync(new RefreshToken
         {
             Token = newRefreshToken,
             UserId = user.Id,
-            ExpiresAt = DateTime.UtcNow.AddDays(30)
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(30)
         });
 
         return new AuthResponse(newToken, newRefreshToken, expiresAt);
@@ -94,18 +94,18 @@ internal class AuthManager(
 
         string refreshToken = request.RefreshToken;
 
-        Entities.RefreshToken? existingToken = await _refreshTokenRepository
+        RefreshToken? existingToken = await _refreshTokenRepository
             .FindAsync(x =>
                 x.Token == request.RefreshToken &&
-                x.RevokedAt == null &&
-                x.ExpiresAt > DateTime.UtcNow &&
+                x.RevokedAtUtc == null &&
+                x.ExpiresAtUtc > DateTime.UtcNow &&
                 x.UserId == userId
             );
 
-        if (existingToken == null || !existingToken.IsActive)
+        if (existingToken == null || !existingToken.IsActive())
             throw new UnauthorizedException("Invalid refresh token.");
 
-        existingToken.RevokedAt = DateTime.UtcNow;
+        existingToken.RevokedAtUtc = DateTime.UtcNow;
 
         await _refreshTokenRepository.UpdateAsync(existingToken);
     }
