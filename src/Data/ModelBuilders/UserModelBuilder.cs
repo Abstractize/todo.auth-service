@@ -27,7 +27,10 @@ public static class UserModelBuilder
 
             entity.Property(u => u.Role)
                 .IsRequired()
-                .HasConversion<string>();
+                .HasConversion(
+                    x => x.ToString(),
+                    x => Enum.Parse<UserRole>(x)
+                );
         });
     }
 }
