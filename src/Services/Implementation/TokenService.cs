@@ -23,6 +23,7 @@ internal class TokenService(string audience, string issuer, string jwtKey) : ITo
 
         Claim[] claims =
         [
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.Name, fullName),
