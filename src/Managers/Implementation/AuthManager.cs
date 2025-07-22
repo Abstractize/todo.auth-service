@@ -37,7 +37,7 @@ internal class AuthManager(
             user.Id,
             user.Email,
             user.FullName,
-            nameof(user.Role)
+            user.Role.ToString()
         );
 
         string refreshToken = await tokenService.GenerateSecureRefreshToken();
