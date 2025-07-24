@@ -37,6 +37,8 @@ public class Program
 
         app.MapAuthEndpoint();
 
+        app.MigrateAtStartup(SQL_CONNECTION_STRING is not null);
+
         app.Run();
     }
 }
