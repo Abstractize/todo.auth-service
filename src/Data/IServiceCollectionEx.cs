@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Data.Repositories;
-using Data.Entities;
+using Data.Common.Extensions;
+using Data.Common.Context;
 
 namespace Data
 {
@@ -27,5 +28,12 @@ namespace Data
 
             return services;
         }
+
+        public static void MigrateAtStartup(this IHost host, bool applyMigrations = true)
+        {
+            if (applyMigrations)
+                host.ApplyMigrations<DatabaseContext>();
+        }
+
     }
 }

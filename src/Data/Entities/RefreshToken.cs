@@ -1,17 +1,15 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using Data.Common.Entity;
 
 namespace Data.Entities;
 
-public class RefreshToken
+public class RefreshToken : ReadOnlyEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
 
     public string Token { get; set; } = null!;
     public DateTime ExpiresAtUtc { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     public DateTime? RevokedAtUtc { get; set; }
     public string? ReplacedByToken { get; set; }
 
