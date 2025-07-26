@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-    <PackageReference Include="ToDoApp.Models.Common" Version="1.0.2" />
+    <PackageReference Include="ToDoApp.Models.Common" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

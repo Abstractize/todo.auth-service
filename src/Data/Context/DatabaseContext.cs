@@ -18,6 +18,8 @@ namespace Data.Context
         {
             modelBuilder.BuildUserModel();
             modelBuilder.BuildRefreshTokenModel();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
