@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="ToDoApp.Data.Common" Version="1.0.2" />
+    <PackageReference Include="ToDoApp.Data.Common" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
