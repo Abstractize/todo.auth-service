@@ -1,0 +1,51 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+
+      - name: Helm lint
+        run: helm lint .helm
+
+  docker-build-test:
+    permissions:
+      contents: read
+      packages: write
+
+    runs-on: ubuntu-latest
+    needs: helm-lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image with secret
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          load: true
+          build-args: |
+            GITHUB_USERNAME=${{ github.repository_owner }}
+          secrets: |
+            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          tags: test-image:pr-${{ github.event.pull_request.number }}
+          
+      - name: Run container test
+        run: docker run --rm --entrypoint sleep test-image:pr-${{ github.event.pull_request.number }} 5

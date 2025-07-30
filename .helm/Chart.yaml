@@ -1,0 +1,7 @@
+apiVersion: v2
+name: auth-service
+description: Helm chart for the Auth Service of the TODO app
+type: application
+version: 0.1.0
+appVersion: "latest"
+icon: https://raw.githubusercontent.com/Abstractize/todo.auth/main/.helm/icons/auth.svg
