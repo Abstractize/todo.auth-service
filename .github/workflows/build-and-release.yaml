@@ -1,4 +1,4 @@
-name: Build and Release Gateway Chart
+name: Build and Release Auth Chart
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: gateway
+  IMAGE_NAME: auth
   REGISTRY: ghcr.io
   OCI_REPO: ghcr.io/abstractize
   PROJECT_NAME: todo

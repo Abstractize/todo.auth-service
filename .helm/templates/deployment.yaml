@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "auth.fullname" . }}
+  name: {{ include "auth-service.fullname" . }}
   labels:
-    app: {{ include "auth.name" . }}
-    chart: {{ include "auth.chart" . }}
+    app: {{ include "auth-service.name" . }}
+    chart: {{ include "auth-service.chart" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "auth.name" . }}
+      app: {{ include "auth-service.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "auth.name" . }}
+        app: {{ include "auth-service.name" . }}
     spec:
       containers:
-        - name: {{ include "auth.name" . }}
+        - name: {{ include "auth-service.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
