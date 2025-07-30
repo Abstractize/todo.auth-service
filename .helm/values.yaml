@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/abstractize/docker-images/todo/auth
+  repository: ghcr.io/abstractize/docker-images/todo/auth-service
   tag: latest
   pullPolicy: IfNotPresent
 
